@@ -6,7 +6,7 @@ TARGET = btc
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CXX) -o $@ $<
+	$(CXX) -o $@ $^
 
 %.o: %.cpp BitcoinExchange.hpp
 	$(CXX) -c -o $@ $< $(CXXFLAGS)

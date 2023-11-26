@@ -9,12 +9,15 @@ public:
     ~BitcoinExchange();
 
     bool InitializeDatabase(char const *path);
+    bool ProcessInputFile(char const *path);
+    
+    void PrintExchangeRate(const std::string &date, double price) const;
 
 private:
     BitcoinExchange(const BitcoinExchange &);
     BitcoinExchange &operator=(const BitcoinExchange &);
 
-    std::map<time_t, double> m_database;
+    std::map<std::string, double> m_database;
 };
 
 #endif // BITCOIN_EXCHANGE_HPP

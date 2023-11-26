@@ -1,14 +1,14 @@
-SRCS = main.cpp
+SRCS = main.cpp PmergeMe.cpp
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 OBJS = $(patsubst %.cpp, %.o, $(SRCS))
-TARGET = ex00
+TARGET = PmergeMe
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CXX) -o $@ $<
+	$(CXX) -o $@ $^
 
-%.o: %.cpp whatever.hpp
+%.o: %.cpp PmergeMe.hpp
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 clean:

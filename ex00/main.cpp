@@ -12,5 +12,15 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    if (!btc.InitializeDatabase("data.csv"))
+    {
+        return 1;
+    }
+
+    if (!btc.ProcessInputFile(argv[1]))
+    {
+        return 1;
+    }
+
     return 0;
 }
