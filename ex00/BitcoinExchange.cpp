@@ -181,12 +181,15 @@ bool BitcoinExchange::ProcessInputFile(const char *path)
 
 void BitcoinExchange::PrintExchangeRate(const std::string &date, double price) const
 {
-    std::map<std::string, double>::const_iterator it = m_database.lower_bound(date);
+    std::map<std::string, double>::const_iterator it = m_database.find(date);
+
     if (it == m_database.end())
     {
-        std::cout << "No data available for " << date << std::endl;
-        return;
+        it = m_database.lower_bound(date);
+        if (it != m_database.begin())
+            --it;
     }
+
     std::cout << date << " => " << price << " => " << (it->second * price) << std::endl;
 }
 

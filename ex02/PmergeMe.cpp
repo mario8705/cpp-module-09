@@ -172,7 +172,7 @@ void ford_johnson(container_type &c)
     size_t size = c.size();
     RandomAccessIterator first = c.begin(), last = c.end();
 
-    if (size < 1)
+    if (size <= 1)
         return ;
     if (size == 2)
     {
