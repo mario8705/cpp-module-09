@@ -159,8 +159,30 @@ bool BitcoinExchange::ProcessInputFile(const char *path)
             std::cerr << "Error: bad input => " << line << std::endl;
             continue ;
         }
+        if (ss.peek() >= 0)
+        {
+            std::cout << "Error: bad input => " << line << std::endl;
+            continue ;
+        }
         trim(date);
         trim(price);
+
+        std::string::iterator sit;
+
+        for (sit = price.begin(); sit != price.end(); ++sit)
+        {
+            if (!std::isdigit(*sit))
+            {
+                std::cout << "Error: bad input => " << line << std::endl;
+                break ;
+            }
+        }
+
+        if (sit != price.end())
+        {
+            std::cout << "Error: bad input => " << line << std::endl;
+            continue ;
+        }
 
         if (!validate_date(date))
         {
