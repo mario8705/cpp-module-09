@@ -143,7 +143,7 @@ bool BitcoinExchange::ProcessInputFile(const char *path)
         std::cerr << "Error: could not open file." << std::endl;
         return false;
     }
-    if (!std::getline(in, line))
+    if (!std::getline(in, line) || line != "date | value")
     {
         std::cerr << "Invalid input file header" << std::endl;
         return false;
