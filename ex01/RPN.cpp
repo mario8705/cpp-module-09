@@ -1,4 +1,4 @@
-#include "RPN.h"
+#include "RPN.hpp"
 #include <iostream>
 
 RPN::RPN()
@@ -17,7 +17,7 @@ bool RPN::EvaluateExpression(const std::string &expr)
     {
         if (std::isdigit(*it))
         {
-            m_stack.push(*it - '0');
+            m_stack.push(static_cast<double>(*it - '0'));
         }
         else
         {
@@ -33,9 +33,9 @@ bool RPN::EvaluateExpression(const std::string &expr)
                 return false;
             }
 
-            long rhs = m_stack.top();
+            double rhs = m_stack.top();
             m_stack.pop();
-            long lhs = m_stack.top();
+            double lhs = m_stack.top();
             m_stack.pop();
 
             if (*it == '/' && rhs == 0)
@@ -76,7 +76,7 @@ void RPN::PrintResult(std::ostream &out)
     }
     if (m_stack.size() > 1)
     {
-        std::cout << "More than one result in the stack, printing the first one" << std::endl;
+        std::cout << "More than one result in the stack, printing the last one" << std::endl;
     }
     out << m_stack.top() << std::endl;
 }

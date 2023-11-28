@@ -13,7 +13,7 @@ public:
     void PrintResult(std::ostream &out);
 
 private:
-    std::stack<long> m_stack;
+    std::stack<double> m_stack;
 };
 
 #endif // RPN_H
