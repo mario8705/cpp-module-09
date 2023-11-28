@@ -168,12 +168,16 @@ bool BitcoinExchange::ProcessInputFile(const char *path)
         trim(price);
 
         std::string::iterator sit;
+        bool dot = false;
 
         for (sit = price.begin(); sit != price.end(); ++sit)
         {
-            if (!std::isdigit(*sit))
+            if (*sit == '.' && !dot)
             {
-                std::cout << "Error: bad input => " << line << std::endl;
+                dot = true;
+            }
+            else if (!std::isdigit(*sit))
+            {
                 break ;
             }
         }
