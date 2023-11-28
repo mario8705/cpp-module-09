@@ -11,10 +11,13 @@ RPN::~RPN()
 
 bool RPN::EvaluateExpression(const std::string &expr)
 {
-    std::string::const_iterator it = expr.begin();
+    std::string::const_iterator it;
 
-    while (it != expr.end())
+    for (it = expr.begin(); it != expr.end(); std::advance(it, 1))
     {
+        if (std::isspace(*it))
+            continue ;
+
         if (std::isdigit(*it))
         {
             m_stack.push(static_cast<double>(*it - '0'));
@@ -62,7 +65,6 @@ bool RPN::EvaluateExpression(const std::string &expr)
                 break;
             }
         }
-        ++it;
     }
     return true;
 }
