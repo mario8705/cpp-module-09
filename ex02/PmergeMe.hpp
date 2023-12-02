@@ -1,7 +1,8 @@
 #ifndef PMERGEME_HPP
 #define PMERGEME_HPP
-#include <list>
+#include <vector>
 #include <deque>
+#include <ostream>
 
 class PmergeMe {
 public:

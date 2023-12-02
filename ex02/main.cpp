@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
     pmergeMe.PrintSequence(std::cout, "Before:  ");
     pmergeMe.Sort(a, b);
     pmergeMe.PrintSequence(std::cout, "After:   ");
-    std::cout << "Time to process a range of " << pmergeMe.SeqLen() << " element(s) with std::vector : " << a << " us" << std::endl;
-    std::cout << "Time to process a range of " << pmergeMe.SeqLen() << " element(s) with std::dequee : " << b << " us" << std::endl;
+    std::cout << "Time to process a range of " << pmergeMe.SeqLen() << " element(s) with std::vector : " << (long long)a << " us" << std::endl;
+    std::cout << "Time to process a range of " << pmergeMe.SeqLen() << " element(s) with std::dequee : " << (long long)b << " us" << std::endl;
     return 0;
 }

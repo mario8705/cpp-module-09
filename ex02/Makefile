@@ -1,5 +1,5 @@
 SRCS = main.cpp PmergeMe.cpp
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g3
 OBJS = $(patsubst %.cpp, %.o, $(SRCS))
 TARGET = PmergeMe
 
@@ -9,7 +9,7 @@ $(TARGET): $(OBJS)
 	$(CXX) -o $@ $^
 
 %.o: %.cpp PmergeMe.hpp
-	$(CXX) -c -o $@ $< $(CXXFLAGS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS) -g3
 
 clean:
 	rm -rf $(OBJS)

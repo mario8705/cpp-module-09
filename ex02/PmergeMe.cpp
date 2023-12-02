@@ -1,15 +1,12 @@
 #include "PmergeMe.hpp"
 #include <string>
 #include <iostream>
-#include <algorithm>
 #include <cstddef>
-#include <cstdint>
+#include <algorithm>
 #include <functional>
 #include <list>
 #include <iterator>
-#include <type_traits>
 #include <vector>
-
 
 PmergeMe::PmergeMe()
 {
@@ -71,18 +68,18 @@ void PmergeMe::Sort(double &vectorTime, double &queueTime)
     clock_t start;
     clock_t elapsed;
 
-    start = std::clock();
+    start = clock();
     SortVector();
-    elapsed = std::clock() - start;
+    elapsed = clock() - start;
     vectorTime = static_cast<double>(elapsed * 1000000) / CLOCKS_PER_SEC;
 
-    start = std::clock();
+    start = clock();
     SortQueue();
-    elapsed = std::clock() - start;
+    elapsed = clock() - start;
     queueTime = static_cast<double>(elapsed * 1000000) / CLOCKS_PER_SEC;
 }
 
-static const std::uint_fast64_t jacobsthal_diff[] = {
+static const size_t jacobsthal_diff[] = {
     2u, 2u, 6u, 10u, 22u, 42u, 86u, 170u, 342u, 682u, 1366u,
     2730u, 5462u, 10922u, 21846u, 43690u, 87382u, 174762u, 349526u, 699050u,
     1398102u, 2796202u, 5592406u, 11184810u, 22369622u, 44739242u, 89478486u,
@@ -123,8 +120,8 @@ void insert_pend(RandomAccessIterator first, std::vector<typename T::iterator> &
     for (int k = 0; ; ++k)
     {
         // Find next index
-        uint_fast64_t dist = jacobsthal_diff[k];
-        if (dist > static_cast<uint_fast64_t>(std::distance(current_pend, pend.end())))
+        size_t dist = jacobsthal_diff[k];
+        if (dist > static_cast<size_t>(std::distance(current_pend, pend.end())))
             break;
 
         RandomAccessIterator it = current_it + dist * 2;
@@ -162,6 +159,55 @@ struct iter_value
     }
 };
 
+template <typename container_type, typename CIterator>
+container_type merge(CIterator left_begin, CIterator left_end, CIterator right_begin, CIterator right_end) {
+    container_type result;
+    
+    CIterator left = left_begin;
+    CIterator right = right_begin;
+
+    while (left != left_end && right != right_end) {
+        if (left[1] < right[1]) {
+            result.push_back(left[0]);
+            result.push_back(left[1]);
+            std::advance(left, 2);
+        } else {
+            result.push_back(right[0]);
+            result.push_back(right[1]);
+            std::advance(right, 2);
+        }
+    }
+    
+    while (left != left_end) {
+        result.push_back(*left);
+        left++;
+    }
+    
+    while (right != right_end) {
+        result.push_back(*right);
+        right++;
+    }
+    
+    return result;
+}
+
+template <typename container_type>
+container_type merge_sort(typename container_type::iterator begin, typename container_type::iterator end) {
+    typedef typename container_type::iterator Iterator;
+    size_t dist = std::distance(begin, end);
+    
+    if (dist <= 2) {
+        return container_type(begin, end);
+    }
+    
+    Iterator middle = begin;
+    std::advance(middle, dist / 4 * 2);
+    
+    container_type left = merge_sort<container_type>(begin, middle);
+    container_type right = merge_sort<container_type>(middle, end);
+    return merge<container_type, Iterator>(left.begin(), left.end(), right.begin(), right.end());
+}
+
 ////////////////////////////////////////////////////////////
 // Merge-insertion sort
 template<typename container_type>
@@ -170,6 +216,7 @@ void ford_johnson(container_type &c)
     typedef typename container_type::iterator RandomAccessIterator;
 
     size_t size = c.size();
+    int stray;
     RandomAccessIterator first = c.begin(), last = c.end();
 
     if (size <= 1)
@@ -182,6 +229,8 @@ void ford_johnson(container_type &c)
     }
 
     bool has_stray = (size % 2 != 0);
+    if (has_stray)
+        stray = c.back();
 
     RandomAccessIterator end = has_stray ? (last - 1) : last;
     for (RandomAccessIterator it = first ; it != end ; it += 2)
@@ -190,17 +239,22 @@ void ford_johnson(container_type &c)
             std::iter_swap(it, it + 1);
     }
 
-    for (RandomAccessIterator it = first; it != end; std::advance(it, 2))
-    {
-        for (RandomAccessIterator it2 = it + 2; it2 != end; std::advance(it2, 2))
-        {
-            if (it[1] > it2[1])
-            {
-                std::swap(it[0], it2[0]);
-                std::swap(it[1], it2[1]);
-            }
-        }
-    }
+    container_type ct = merge_sort<container_type>(c.begin(), end);
+    if (has_stray)
+        ct.push_back(stray);
+    c.assign(ct.begin(), ct.end());
+
+    // for (RandomAccessIterator it = first; it != end; std::advance(it, 2))
+    // {
+    //     for (RandomAccessIterator it2 = it + 2; it2 != end; std::advance(it2, 2))
+    //     {
+    //         if (it[1] > it2[1])
+    //         {
+    //             std::swap(it[0], it2[0]);
+    //             std::swap(it[1], it2[1]);
+    //         }
+    //     }
+    // }
 
     typedef std::list<RandomAccessIterator> chain_t;
 
@@ -224,7 +278,7 @@ void ford_johnson(container_type &c)
 
     std::vector<int> cache(size);
     std::transform(chain.begin(), chain.end(), cache.begin(), iter_value<RandomAccessIterator>());
-    std::copy(cache.begin(), cache.end(), first);
+    c.assign(cache.begin(), cache.end());
 }
 
 void PmergeMe::SortVector()
@@ -234,5 +288,5 @@ void PmergeMe::SortVector()
 
 void PmergeMe::SortQueue()
 {
-    ford_johnson(m_queue);
+   ford_johnson(m_queue);
 }
